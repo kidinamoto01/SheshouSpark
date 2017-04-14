@@ -1,5 +1,7 @@
 package sheshou.streaming
 
+import java.util.Calendar
+
 import kafka.serializer.StringDecoder
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SaveMode
@@ -60,8 +62,17 @@ object AnalysisKafkaData {
 
       if(text.count() > 0){
 
-        val result = sqlContext.sql("select destip,srcip,count(*) from windowslogin where loginresult = 680 group by destip,srcip,")
-        result.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/tmp/sheshou/windowslogin")
+
+        val result = sqlContext.sql("select destip,srcip,processtime , count(*) as sum from windowslogin where loginresult = 537 or loginresult = 529  group by srcip,destip,processtime")
+
+        val cal = Calendar.getInstance()
+        val date = cal.get(Calendar.DATE)
+        val Year = cal.get(Calendar.YEAR)
+        val Month1 = cal.get(Calendar.MONTH)
+        val Month = Month1+1
+        val Hour = cal.get(Calendar.HOUR_OF_DAY)
+
+        //result.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/tmp/sheshou/alters/"+topics+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
       }
 
       //text.write.format("parquet").mode(SaveMode.Append).insertInto("parquet_test")

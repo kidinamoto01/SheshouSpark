@@ -16,24 +16,20 @@ import java.util.Calendar
 object SaveKafkaData {
 
   def main(args: Array[String]) {
-    if (args.length < 4) {
+    if (args.length < 2) {
       System.err.println(s"""
                             |Usage: DirectKafkaWordCount <brokers> <topics>
                             |  <brokers> is a list of one or more Kafka brokers
                             |  <topics> is a list of one or more kafka topics to consume from
-                            |  <spliter_in> is the spliter for input
-                            |  <m_length> is the designed length of the message
         """.stripMargin)
       System.exit(1)
     }
 
 
-    val Array(brokers, topics,spliter_in,m_length) = args
+    val Array(brokers, topics) = args
     println(brokers)
     println(topics)
-    println(spliter_in)
 
-    println(m_length)
     // Create context with 2 second batch interval
     val sparkConf = new SparkConf().setAppName("SaveKafkaData").setMaster("local[*]")
     //sparkConf.set("spark.hadoop.parquet.enable.summary-metadata", "true")
@@ -46,10 +42,9 @@ object SaveKafkaData {
     val topicsSet = topics.split(",").toSet
     val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers,
       "zookeeper.connect" -> "localhost:2181")
-    //,"auto.offset.reset" -> "sma
+
     val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
       ssc, kafkaParams, topicsSet).map(_._2)
-
 
     // Get the lines
     messages.foreachRDD{ x =>
@@ -74,7 +69,7 @@ object SaveKafkaData {
         println("write")
         //text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/")
 
-     text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+        text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/"+topics+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
       }
 
     }
