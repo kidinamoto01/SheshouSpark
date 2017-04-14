@@ -13,22 +13,23 @@ object ReadParquetData {
   def main(args: Array[String]) {
     val logFile = "/usr/local/share/spark-2.1.0-bin-hadoop2.6/README.md" // Should be some file on your system
     val filepath = "/Users/b/Documents/andlinks/sheshou/log/0401log3(1).txt"
+    val middlewarepath = "hdfs://192.168.1.21:8020/user/root/test/webmiddle/20170413/web.json"
     val hdfspath = "hdfs://192.168.1.21:8020/user/root/test/windowslogin/20170413/windowslogin"
     val conf = new SparkConf().setAppName("Offline Doc Application").setMaster("local[*]")
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
     //read json file
-    val file =sqlContext.read.json(hdfspath)//.toDF()
+    val file =sqlContext.read.json(middlewarepath)//.toDF()
     file.printSchema()
    // println(file.count())
 
     val temptable = file.registerTempTable("windowslogin") //where loginresult = 537 or loginresult = 529
 
     //val result = sqlContext.sql("select destip,srcip, collecttime , count(*) as sum from windowslogin group by srcip,destip,collecttime")
-    val result = sqlContext.sql("select loginresult,count(*) from windowslogin group by loginresult")
+    val result = sqlContext.sql("select collectequp,collecttime,statuscode,count(*) from windowslogin group by collectequp, collecttime,statuscode")
 
-   // println(result.count())
-    result.rdd.foreach(println)
+   //println(result.count())
+   result.rdd.foreach(println)
 
     val cal = Calendar.getInstance()
     val date =cal.get(Calendar.DATE )
