@@ -53,7 +53,8 @@ object KafkaDemo {
         val producer = new KafkaProducer[String,String](props)
         partitionOfRecords.foreach { record =>
           if (record.length > 0) {
-            println(spliter_in)
+            println(record)
+          /*  println(spliter_in)
             val s:Char = spliter_in.charAt(0)
             val data:Array[String] = record.split(s)
 
@@ -67,7 +68,7 @@ object KafkaDemo {
               val message = new ProducerRecord[String, String]("cleaned_output", null, newcontent)
               producer.send(message)
             }
-          }
+          */}
 
         }
       }
