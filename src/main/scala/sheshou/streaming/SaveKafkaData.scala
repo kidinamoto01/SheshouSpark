@@ -39,14 +39,14 @@ object SaveKafkaData {
     //sparkConf.set("spark.hadoop.parquet.enable.summary-metadata", "true")
     //spark.hadoop.parquet.enable.summary-metadata false
     val  sc = new SparkContext(sparkConf)
-    val ssc = new StreamingContext(sc, Seconds(2))
+    val ssc = new StreamingContext(sc, Seconds(10))
 
 
     // Create direct kafka stream with brokers and topics
     val topicsSet = topics.split(",").toSet
     val kafkaParams = Map[String, String]("metadata.broker.list" -> brokers,
-      "zookeeper.connect" -> "localhost:2181",
-      "auto.offset.reset" -> "largest")
+      "zookeeper.connect" -> "localhost:2181")
+    //,"auto.offset.reset" -> "sma
     val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
       ssc, kafkaParams, topicsSet).map(_._2)
 
@@ -71,7 +71,10 @@ object SaveKafkaData {
         val Month1 = cal.get(Calendar.MONTH)
         val Month = Month1+1
         val Hour = cal.get(Calendar.HOUR_OF_DAY)
-        text.write.mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/sheshou/parquet/"+Year+"/"+Month1+"/"+date+"/"+Hour+"/")
+        println("write")
+        //text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/")
+
+     text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
       }
 
     }

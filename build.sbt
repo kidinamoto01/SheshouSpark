@@ -16,12 +16,4 @@ libraryDependencies += "org.apache.spark" % "spark-sql_2.11" % "2.0.0"
 
 libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.12"
 
-libraryDependencies ++= Seq(
-  ("org.elasticsearch" % "elasticsearch-spark_2.11" % "2.3.3").
-    exclude("com.google.guava", "guava").
-    exclude("org.apache.hadoop", "hadoop-yarn-api").
-    exclude("org.eclipse.jetty.orbit", "javax.mail.glassfish").
-    exclude("org.eclipse.jetty.orbit", "javax.servlet").
-    exclude("org.slf4j", "slf4j-api")
-)
 
