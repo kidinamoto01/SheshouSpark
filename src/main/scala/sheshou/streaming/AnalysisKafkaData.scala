@@ -14,7 +14,7 @@ import org.apache.spark.streaming.kafka.KafkaUtils
 object AnalysisKafkaData {
   def main(args: Array[String]) {
     if (args.length < 4) {
-      System.err.println(s"""
+      System.err.println(s"""se
                             |Usage: DirectKafkaWordCount <brokers> <topics>
                             |  <brokers> is a list of one or more Kafka brokers
                             |  <topics> is a list of one or more kafka topics to consume from
@@ -63,7 +63,7 @@ object AnalysisKafkaData {
       if(text.count() > 0){
 
 
-        val result = sqlContext.sql("select destip,srcip,processtime , count(*) as sum from windowslogin where loginresult = 537 or loginresult = 529  group by srcip,destip,processtime")
+        val result = sqlContext.sql("select * from (select collectequp,collecttime,statuscode,count(*) as sum from windowslogin group by collectequp, collecttime,statuscode)t where t.sum >2")
 
         val cal = Calendar.getInstance()
         val date = cal.get(Calendar.DATE)
@@ -72,7 +72,7 @@ object AnalysisKafkaData {
         val Month = Month1+1
         val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
-        //result.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/tmp/sheshou/alters/"+topics+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+        result.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/tmp/sheshou/alters/"+topics+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
       }
 
       //text.write.format("parquet").mode(SaveMode.Append).insertInto("parquet_test")

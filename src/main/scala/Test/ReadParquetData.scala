@@ -26,7 +26,7 @@ object ReadParquetData {
     val temptable = file.registerTempTable("windowslogin") //where loginresult = 537 or loginresult = 529
 
     //val result = sqlContext.sql("select destip,srcip, collecttime , count(*) as sum from windowslogin group by srcip,destip,collecttime")
-    val result = sqlContext.sql("select collectequp,collecttime,statuscode,count(*) from windowslogin group by collectequp, collecttime,statuscode")
+    val result = sqlContext.sql("select * from (select collectequp,collecttime,statuscode,count(*) as sum from windowslogin group by collectequp, collecttime,statuscode)t where t.sum >2")
 
    //println(result.count())
    result.rdd.foreach(println)

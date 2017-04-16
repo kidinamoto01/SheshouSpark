@@ -44,7 +44,21 @@ object SaveKafkaData {
       "zookeeper.connect" -> "localhost:2181")
 
     val messages = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
-      ssc, kafkaParams, topicsSet).map(_._2)
+      ssc, kafkaParams,  Set("webmiddle")).map(_._2)
+
+    val messages2 = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+      ssc, kafkaParams, Set("netstds")).map(_._2)
+
+    val messages3 = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+      ssc, kafkaParams, Set("windowslogin")).map(_._2)
+
+    //Get Date
+    val cal = Calendar.getInstance()
+    val date = cal.get(Calendar.DATE)
+    val Year = cal.get(Calendar.YEAR)
+    val Month1 = cal.get(Calendar.MONTH)
+    val Month = Month1+1
+    val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
     // Get the lines
     messages.foreachRDD{ x =>
@@ -54,26 +68,67 @@ object SaveKafkaData {
       val text = sqlContext.read.json(x)
 
       //get json schame
-      //text.toDF().printSchema()
+      text.toDF().printSchema()
 
       //save text into parquet file
       //make sure the RDD is not empty
       if(text.count()>0)
       {
-        val cal = Calendar.getInstance()
-        val date = cal.get(Calendar.DATE)
-        val Year = cal.get(Calendar.YEAR)
-        val Month1 = cal.get(Calendar.MONTH)
-        val Month = Month1+1
-        val Hour = cal.get(Calendar.HOUR_OF_DAY)
+
         println("write")
         //text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/")
 
-        text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/"+topics+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+        text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/sheshou/data/parquet/"+"webmiddle"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
       }
 
     }
 
+    // Get the lines
+    messages2.foreachRDD{ x =>
+
+      val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+      // val text = sqlContext.read.json(x)
+      val text = sqlContext.read.json(x)
+
+      //get json schame
+      text.toDF().printSchema()
+
+      //save text into parquet file
+      //make sure the RDD is not empty
+      if(text.count()>0)
+      {
+
+        println("write2")
+        //text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/")
+
+        text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/sheshou/data/parquet/"+"netstds"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+      }
+
+    }
+
+
+    // Get the lines
+    messages3.foreachRDD{ x =>
+
+      val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+      // val text = sqlContext.read.json(x)
+      val text = sqlContext.read.json(x)
+
+      //get json schame
+      text.toDF().printSchema()
+
+      //save text into parquet file
+      //make sure the RDD is not empty
+      if(text.count()>0)
+      {
+
+        println("write3")
+        //text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/tmp/sheshou/parquet/")
+
+        text.write.format("parquet").mode(SaveMode.Append).parquet("hdfs://192.168.1.21:8020/sheshou/data/parquet/"+"windowslogin"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+      }
+
+    }
 
     // Start the computation
     ssc.start()
