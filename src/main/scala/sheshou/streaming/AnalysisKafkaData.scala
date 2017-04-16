@@ -66,10 +66,12 @@ object AnalysisKafkaData {
       if(text.count() > 0){
 
 
-        val result = sqlContext.sql("select * from " +
+       /* val result = sqlContext.sql("select * from " +
           "(select collectequp,collecttime,statuscode,count(*) as sum " +
           "from windowslogin group by collectequp, collecttime,statuscode)t " +
-          "where t.sum >2")
+          "where t.sum >2")*/
+        val result = sqlContext.sql("select * from (select loginresult, collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip, count(*) as sum from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip )t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
+
 
         /*result.foreach{
           x=>
@@ -82,7 +84,7 @@ object AnalysisKafkaData {
         val Month = Month1+1
         val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
-        result.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+topicsSet+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+        result.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+"forcebreak"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
       }
 
       //text.write.format("parquet").mode(SaveMode.Append).insertInto("parquet_test")

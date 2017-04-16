@@ -83,7 +83,7 @@ object ReadParquetData {
     val Month = Month1+1
     val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
-  //  tmp.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+"forcebreak"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+    tmp.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+"forcebreak"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
 
 
   }
