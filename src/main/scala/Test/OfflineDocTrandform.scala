@@ -12,12 +12,12 @@ object OfflineDocTrandform {
   def main(args: Array[String]) {
     val logFile = "/usr/local/share/spark-2.1.0-bin-hadoop2.6/README.md" // Should be some file on your system
     val filepath = "/Users/b/Documents/andlinks/sheshou/log/0401log3(1).txt"
-    val hdfspath = "hdfs://192.168.1.21:8020/user/root/windowslogin/20170411/0401log3.txt"
+    val hdfspath = "hdfs://192.168.1.21:8020/sheshou/data/parquet/netstds/2017/4/16/14"
     val conf = new SparkConf().setAppName("Offline Doc Application").setMaster("local[*]")
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
     //read json file
-    val file =sqlContext.read.json(hdfspath)//.toDF()
+    val file =sqlContext.read.parquet(hdfspath)//.toDF()
     file.printSchema()
     println(file.count())
     val cal = Calendar.getInstance()
@@ -26,12 +26,12 @@ object OfflineDocTrandform {
     val Month1 =cal.get(Calendar.MONTH )
     val Month = Month1+1
    // println(file.first())
-    file.write
+    /*file.write
       .format("com.databricks.spark.csv")
       .mode("append")
       .option("delimiter","\t")
       .save("hdfs://192.168.1.21:8020/tmp/sheshou/hive/"+Year+Month+date)
 
-
+*/
   }
 }
