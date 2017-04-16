@@ -39,7 +39,7 @@ object ReadParquetData {
     tmp.printSchema()
    //val result = sqlContext.sql("select * from (select id,collecttime,destip,srcip,\"break\",srccountrycode,,srccity,destcountrycode,srccountry,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip,level,count(*) as sum from windowslogin group by id,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,level)t where t.sum >2")
 
-    //val result = sqlContext.sql("select * from (select id,collecttime,destip,srcip,srccountrycode, srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude, destlatitude,destlongitude,collecttime,collectequpip,collectequpip,level,loginresult,count(*) as sum from windowslogin group by id,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip,level,loginresult)t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
+    //val result = sqlContext.sql("select * from (select id,collecttime,destip,srcip,srccountrycode, srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude, destlatitude,destlongitude,collecttime,collectequpip,level,loginresult,count(*) as sum from windowslogin group by id,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip,level,loginresult)t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
 
    println(file.count())
     println(tmp.count())
@@ -47,23 +47,6 @@ object ReadParquetData {
     tmp.foreach{x=>
       println(x.get(0))
     }
-    /*message spark_schema {
-  optional binary collecttime (UTF8);0
-  optional binary destip (UTF8);1
-  optional binary srcip (UTF8);2
-  optional binary destequp (UTF8);3
-  optional binary loginresult (UTF8);4
-  optional binary destcountrycode (UTF8);5
-  optional binary srccountrycode (UTF8);6
-  optional binary srccountry (UTF8);7
-  optional binary destcountry (UTF8);8
-  optional binary destcity (UTF8);9
-  optional binary srclatitude (UTF8);10
-  optional binary srclongitude (UTF8);11
-  optional binary destlatitude (UTF8);12
-  optional binary destlongitude (UTF8);13
-  required int64 sum;
-}*/
 
   tmp.rdd.foreach(println)
 /*
@@ -100,7 +83,7 @@ object ReadParquetData {
     val Month = Month1+1
     val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
-    tmp.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+"forcebreak"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+  //  tmp.write.mode(SaveMode.Append).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+"forcebreak"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
 
 
   }
