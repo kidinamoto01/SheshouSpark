@@ -14,10 +14,6 @@ import org.apache.spark.streaming.kafka.KafkaUtils
   */
 object AnalysisKafkaData {
 
-  case class AttackList(id:Int,attack_time:Date,dst_ip :String, src_ip: String, attack_type: String, src_country_code :String,
-                        src_country :String, src_city :String, dst_country_code:String, dst_country :String, dst_city :String,
-                        src_latitude: Double, src_longitude :Double, dst_latitude :Double, dst_longitude :Double,
-                        end_time :Date, asset_id :Int, asset_name :String, alert_level :String)
   def main(args: Array[String]) {
     if (args.length < 2) {
       System.err.println(s"""se
@@ -67,7 +63,7 @@ object AnalysisKafkaData {
           "(select collectequp,collecttime,statuscode,count(*) as sum " +
           "from windowslogin group by collectequp, collecttime,statuscode)t " +
           "where t.sum >2")*/
-        val result = sqlContext.sql("select * from (select loginresult, collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip, count(*) as sum from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip )t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
+       val result = sqlContext.sql("select t.id,t.attack_time,t.destip, t.srcip, t.attack_type, t.srccountrycode, t.srccountry, t.srccity,t.destcountrycode,t.destcountry,t.destcity, t.srclatitude, t.srclongitude ,t.destlatitude,t.destlongitude,t.end_time,t.asset_id,t.asset_name,t.alert_level from (select \"0\" as id,loginresult , collecttime as attack_time, destip,srcip,\"forcebreak\" as attack_type ,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip,collecttime as end_time, count(*) as sum ,\"0\" as asset_id, \"name\" as asset_name,\"0\" as  alert_level from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip)t where t.sum > 2")
 
         result.rdd.foreach(println)
         /*result.foreach{

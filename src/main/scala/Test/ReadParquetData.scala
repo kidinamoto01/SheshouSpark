@@ -12,10 +12,22 @@ import org.apache.spark.sql.{SQLContext, SaveMode}
 object ReadParquetData {
 
   def main(args: Array[String]) {
+    if (args.length < 2) {
+      System.err.println(s"""
+                            |Usage: DirectKafkaWordCount <brokers> <topics>
+                            |  <src_path> is a list of one or more Kafka brokers
+                            |  <dest_path> is a list of one or more kafka topics to consume from
+        """.stripMargin)
+      System.exit(1)
+    }
 
-    val windowsloginpath = "hdfs://192.168.1.21:8020/sheshou/data/parquet/windowslogin/2017/4/16/14"
-    val middlewarepath = "hdfs://192.168.1.21:8020/user/root/test/webmiddle/20170413/web.json"
-    val hdfspath = "hdfs://192.168.1.21:8020/user/root/test/windowslogin/20170413/windowslogin"
+
+    val Array(windowsloginpath, outputpath) = args
+    println(windowsloginpath)
+    println(outputpath)
+
+   // val windowsloginpath = "hdfs://192.168.1.21:8020/sheshou/data/parquet/windowslogin/2017/4/16/14"
+
     val conf = new SparkConf().setAppName("Offline Doc Application").setMaster("local[*]")
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
@@ -28,12 +40,9 @@ object ReadParquetData {
 
     //val result = sqlContext.sql("select * from (select  collecttime,destip,srcip,destequp,loginresult,destcountrycode,srccountrycode,srccountry,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,count(*) as sum from windowslogin group by loginresult, destcountrycode,srccountrycode, collecttime,destip,srcip,destequp,srccountry,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude)t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
 
-   val tmp = sqlContext.sql("select t.id,t.attack_time,t.destip, t.srcip, t.attack_type, t.srccountrycode, t.srccountry, t.srccity,t.destcountrycode,t.destcountry,t.destcity, t.srclatitude, t.srclongitude ,t.destlatitude,t.destlongitude,t.end_time,t.asset_id,t.asset_name,t.alert_level from (select \"0\" as id,loginresult , collecttime as attack_time, destip,srcip,\"forcebreak\" as attack_type ,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip,collecttime as end_time, count(*) as sum ,\"0\" as asset_id, \"name\" as asset_name,\"0\" as  alert_level from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip)t where t.sum > 2")
+   val tmp = sqlContext.sql("select t.id,t.attack_time,t.destip as dest_ip, t.srcip as src_ip, t.attack_type, t.srccountrycode as src_country_code, t.srccountry as src_country, t.srccity as src_city,t.destcountrycode as dst_country_code,t.destcountry as dst_country,t.destcity as dst_city , t.srclatitude as src_latitude, t.srclongitude as src_longitude ,t.destlatitude as dst_latitude ,t.destlongitude as dst_longitude ,t.end_time,t.asset_id,t.asset_name,t.alert_level from (select \"0\" as id,loginresult , collecttime as attack_time, destip,srcip,\"forcebreak\" as attack_type ,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip,collecttime as end_time, count(*) as sum ,\"0\" as asset_id, \"name\" as asset_name,\"0\" as  alert_level from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip)t where t.sum > 2")
 
     tmp.printSchema()
-   //val result = sqlContext.sql("select * from (select id,collecttime,destip,srcip,\"break\",srccountrycode,,srccity,destcountrycode,srccountry,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip,level,count(*) as sum from windowslogin group by id,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,level)t where t.sum >2")
-
-    //val result = sqlContext.sql("select * from (select id,collecttime,destip,srcip,srccountrycode, srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude, destlatitude,destlongitude,collecttime,collectequpip,level,loginresult,count(*) as sum from windowslogin group by id,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip,collectequpip,level,loginresult)t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
 
    //println(file.count())
    // println(tmp.count())
@@ -47,7 +56,7 @@ object ReadParquetData {
     val Month = Month1+1
     val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
-    //tmp.write.mode(SaveMode.Overwrite).save("hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/"+"break"+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+    tmp.write.mode(SaveMode.Append).save(outputpath+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
 
 
   }
