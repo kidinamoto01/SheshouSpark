@@ -2,7 +2,6 @@ package sheshou.streaming
 import java.util
 
 import kafka.serializer.StringDecoder
-import org.apache.kafka.clients.producer.{KafkaProducer, ProducerConfig, ProducerRecord}
 import org.apache.spark.sql.SaveMode
 import org.apache.spark.sql.types.{StringType, StructType}
 import org.apache.spark.{SparkConf, SparkContext}

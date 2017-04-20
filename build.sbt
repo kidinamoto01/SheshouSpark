@@ -1,3 +1,5 @@
+
+
 name := "SheshouSpark"
 
 version := "1.0"
@@ -10,7 +12,7 @@ libraryDependencies += "org.apache.spark" % "spark-streaming-kafka-0-8_2.11" % "
 
 libraryDependencies += "org.apache.spark" % "spark-mllib_2.11" % "2.0.0"
 
-libraryDependencies += "org.apache.spark" % "spark-streaming_2.11" % "2.0.0"% "provided"
+libraryDependencies += "org.apache.spark" % "spark-streaming_2.11" % "2.0.0"
 
 libraryDependencies += "org.apache.spark" % "spark-sql_2.11" % "2.0.0"
 
@@ -19,3 +21,6 @@ libraryDependencies += "org.slf4j" % "slf4j-api" % "1.7.12"
 libraryDependencies +="org.apache.kafka"%"kafka-clients"%"0.10.0.0"
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
+
+
+
