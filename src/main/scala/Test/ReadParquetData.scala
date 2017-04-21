@@ -1,7 +1,7 @@
 package Test
 
 import java.sql.Date
-import java.util.Calendar
+import java.util.{Calendar, Properties}
 
 import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.{SQLContext, SaveMode}
@@ -40,14 +40,13 @@ object ReadParquetData {
 
     //val result = sqlContext.sql("select * from (select  collecttime,destip,srcip,destequp,loginresult,destcountrycode,srccountrycode,srccountry,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,count(*) as sum from windowslogin group by loginresult, destcountrycode,srccountrycode, collecttime,destip,srcip,destequp,srccountry,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude)t where t.sum > 2 and (t.loginresult = 528 or t.loginresult = 529)")
 
-   val tmp = sqlContext.sql("select t.id,t.attack_time,t.destip as dest_ip, t.srcip as src_ip, t.attack_type, t.srccountrycode as src_country_code, t.srccountry as src_country, t.srccity as src_city,t.destcountrycode as dst_country_code,t.destcountry as dst_country,t.destcity as dst_city , t.srclatitude as src_latitude, t.srclongitude as src_longitude ,t.destlatitude as dst_latitude ,t.destlongitude as dst_longitude ,t.end_time,t.asset_id,t.asset_name,t.alert_level from (select \"0\" as id,loginresult , collecttime as attack_time, destip,srcip,\"forcebreak\" as attack_type ,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip,collecttime as end_time, count(*) as sum ,\"0\" as asset_id, \"name\" as asset_name,\"0\" as  alert_level from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip)t where t.sum > 2")
+   val tmp = sqlContext.sql("select t.id,t.attack_time,t.destip as dst_ip, t.srcip as src_ip, t.attack_type, t.srccountrycode as src_country_code, t.srccountry as src_country, t.srccity as src_city,t.destcountrycode as dst_country_code,t.destcountry as dst_country,t.destcity as dst_city , t.srclatitude as src_latitude, t.srclongitude as src_longitude ,t.destlatitude as dst_latitude ,t.destlongitude as dst_longitude ,t.end_time,t.asset_id,t.asset_name,t.alert_level from (select \"0\" as id,loginresult , collecttime as attack_time, destip,srcip,\"forcebreak\" as attack_type ,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collectequpip,collecttime as end_time, count(*) as sum ,\"0\" as asset_id, \"name\" as asset_name,\"0\" as  alert_level from windowslogin group by loginresult,collecttime,destip,srcip,srccountrycode,srccountry,srccity,destcountrycode,destcountry,destcity,srclatitude,srclongitude,destlatitude,destlongitude,collecttime,collectequpip)t where (t.sum > 2 and ( t.loginresult = 539 or t.loginresult = 529 or  t.loginresult = 528 ))")
 
     tmp.printSchema()
 
    //println(file.count())
-   // println(tmp.count())
 
-  tmp.rdd.foreach(println)
+
 
     val cal = Calendar.getInstance()
     val date =cal.get(Calendar.DATE )
@@ -56,8 +55,20 @@ object ReadParquetData {
     val Month = Month1+1
     val Hour = cal.get(Calendar.HOUR_OF_DAY)
 
-    tmp.write.mode(SaveMode.Append).save(outputpath+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+    tmp.rdd.foreach(println)
+    println("************"+tmp.count())
+    //tmp.write.mode(SaveMode.Append).save(outputpath+"/"+Year+"/"+Month+"/"+date+"/"+Hour+"/")
+    //MySQL connection property
 
 
+
+    val prop = new Properties()
+    prop.setProperty("user", "root")
+    prop.setProperty("password", "andlinks")
+
+
+    val dfWriter = tmp.write.mode("append").option("driver", "com.mysql.jdbc.Driver")
+
+    dfWriter.jdbc("jdbc:mysql://192.168.1.22:3306/log_info", "attack_list", prop)
   }
 }

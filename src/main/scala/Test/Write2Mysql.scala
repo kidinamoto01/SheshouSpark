@@ -12,7 +12,7 @@ object Write2Mysql {
 
   def main(args: Array[String]) {
     val logFile = "/usr/local/share/spark-2.1.0-bin-hadoop2.6/README.md" // Should be some file on your system
-    val filepath = "hdfs://192.168.1.21:8020/sheshou/data/parquet/realtime/forcebreak/2017/4/16/17"
+    val filepath = "hdfs://192.168.1.21:8020/sheshou/data/parquet/netstds/2017/4/16/14"
     val middlewarepath = "hdfs://192.168.1.21:8020/user/root/test/webmiddle/20170413/web.json"
     val hdfspath = "hdfs://192.168.1.21:8020/user/root/test/windowslogin/20170413/windowslogin"
     val conf = new SparkConf().setAppName("Offline Doc Application").setMaster("local[*]")
@@ -27,7 +27,7 @@ object Write2Mysql {
     prop.setProperty("password", "andlinks")
 
     val dfWriter = file.write.mode("overwrite").option("driver", "com.mysql.jdbc.Driver")
-    dfWriter.jdbc("jdbc:mysql://192.168.1.22:3306/log_info", "realtimeattack", prop)
+    dfWriter.jdbc("jdbc:mysql://192.168.1.22:3306/log_info", "netstds", prop)
 
   }
 

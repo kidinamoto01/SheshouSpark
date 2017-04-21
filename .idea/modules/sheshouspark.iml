@@ -180,5 +180,6 @@
     <orderEntry type="library" name="SBT: org.apache.kafka:kafka-clients:0.10.0.0:jar" level="project" />
     <orderEntry type="library" name="SBT: org.slf4j:slf4j-api:1.7.21:jar" level="project" />
     <orderEntry type="library" name="SBT: mysql:mysql-connector-java:5.1.26:jar" level="project" />
+    <orderEntry type="library" name="HiveProject" level="project" />
   </component>
 </module>

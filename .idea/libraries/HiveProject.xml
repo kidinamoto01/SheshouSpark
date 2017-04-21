@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="HiveProject">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../HiveProject/out/artifacts/HiveProject_jar/HiveProject.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/../HiveProject/out/artifacts/HiveProject_jar/HiveProject.jar!/" />
+    </SOURCES>
+  </library>
+</component>
