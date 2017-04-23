@@ -9,19 +9,7 @@ import org.apache.spark.sql.{SQLContext, SaveMode}
   * Created by suyu on 17-4-21.
   */
 object SparkSQLUDF {
-  def attack(requetspage : String): String = {
 
-    val commands=List( "|id", "|cat /etc/passwd#","'|'ld", "\"|\"ld","';cat /etc/passwd;'","\";cat /etc/passwd;\""
-    , "||cat /etc/passwd", "'&dir&'", "\"&dir&\"", "|ping -n 20 127.0.0.1||x", "`ping -c 20 127.0.0.1`", "&ping -n 20 127.0.0.1&","|ping -c 20 127.0.0.1||x")
-
-    commands.map{
-      x=>
-      if ( requetspage.contains(x))
-        return "命令执行漏洞"
-    }
-
-    return "Nothing"
-  }
   def main(args: Array[String]) {
     if (args.length < 2) {
       System.err.println(s"""
