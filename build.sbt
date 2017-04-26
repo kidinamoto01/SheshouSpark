@@ -22,5 +22,6 @@ libraryDependencies +="org.apache.kafka"%"kafka-clients"%"0.10.0.0"
 
 libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
+libraryDependencies += "org.apache.spark" % "spark-hive_2.11" % "2.1.0"
 
 
