@@ -38,15 +38,14 @@ object SavePartitionedData {
 //    "spark.sql.warehouse.dir", warehouseLocation
   //  spark.conf.set("spark.master", "local")
     import spark.sql
-    val netstdType = sqlContext.read.csv("hdfs://192.168.1.21:8020/tmp/netstds_type")
-   netstdType.createGlobalTempView("net_type")
-    sql("SELECT COUNT(*) FROM global_temp.net_type ").show()
+   // val netstdType = sqlContext.read.csv("hdfs://192.168.1.21:8020/tmp/netstds_type").toDF("a","b","c","d","e")
+    val netstdTest = sqlContext.read.parquet("hdfs://192.168.1.21:8020/apps/hive/warehouse/typetable")
 
-    netstdType.printSchema()
-    netstdType.write.mode(SaveMode.Append)
-      .format("parquet")
-      .partitionBy("_c0")
-      .saveAsTable("typepartitioned")
+    netstdTest.registerTempTable("net_type")
+    sql("SELECT * FROM net_type where  category = \"A\" and subcategory = \"17\"").show()
+
+    netstdTest.printSchema()
+  //  netstdType.write.mode(SaveMode.Append).format("parquet").partitionBy("_c0").saveAsTable("typepartitioned")
     //read json file
   /*  val file =sqlContext.read.parquet(windowsloginpath)//.toDF()file.printSchema()
     // println(file.count())
