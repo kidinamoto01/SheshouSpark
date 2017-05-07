@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="rest-5.2.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Documents/elasticsearch/client/rest/5.2.2/rest-5.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -22,11 +22,14 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="SBT: org.scala-lang:scala-library:2.11.1:jar" level="project" />
-    <orderEntry type="library" name="SBT: org.elasticsearch:elasticsearch-spark-20_2.11:5.3.2:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.elasticsearch:elasticsearch-spark-20_2.11:5.2.2:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.spark:spark-streaming_2.11:2.1.0:jar" level="project" />
     <orderEntry type="library" name="SBT: io.netty:netty:3.8.0.Final:jar" level="project" />
-    <orderEntry type="library" name="SBT: commons-cli:commons-cli:1.2:jar" level="project" />
     <orderEntry type="library" name="SBT: com.google.guava:guava:14.0.1:jar" level="project" />
+    <orderEntry type="library" name="SBT: org.apache.httpcomponents:httpcore:4.4.4:jar" level="project" />
+    <orderEntry type="library" name="SBT: joda-time:joda-time:2.9.3:jar" level="project" />
+    <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-core:2.6.5:jar" level="project" />
+    <orderEntry type="library" name="SBT: commons-cli:commons-cli:1.2:jar" level="project" />
     <orderEntry type="library" name="SBT: org.spire-math:spire_2.11:0.7.4:jar" level="project" />
     <orderEntry type="library" name="SBT: org.spire-math:spire-macros_2.11:0.7.4:jar" level="project" />
     <orderEntry type="library" name="SBT: org.scalanlp:breeze_2.11:0.11.2:jar" level="project" />
@@ -139,7 +142,6 @@
     <orderEntry type="library" name="SBT: com.fasterxml.jackson.module:jackson-module-scala_2.11:2.6.5:jar" level="project" />
     <orderEntry type="library" name="SBT: com.fasterxml.jackson.module:jackson-module-paranamer:2.6.5:jar" level="project" />
     <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-databind:2.6.5:jar" level="project" />
-    <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-core:2.6.5:jar" level="project" />
     <orderEntry type="library" name="SBT: com.fasterxml.jackson.core:jackson-annotations:2.6.5:jar" level="project" />
     <orderEntry type="library" name="SBT: com.esotericsoftware:minlog:1.3.0:jar" level="project" />
     <orderEntry type="library" name="SBT: com.esotericsoftware:kryo-shaded:3.0.3:jar" level="project" />
@@ -165,7 +167,6 @@
     <orderEntry type="library" name="SBT: javax.jdo:jdo-api:3.0.1:jar" level="project" />
     <orderEntry type="library" name="SBT: javax.transaction:jta:1.1:jar" level="project" />
     <orderEntry type="library" name="SBT: javolution:javolution:5.5.1:jar" level="project" />
-    <orderEntry type="library" name="SBT: joda-time:joda-time:2.9.3:jar" level="project" />
     <orderEntry type="library" name="SBT: log4j:apache-log4j-extras:1.2.17:jar" level="project" />
     <orderEntry type="library" name="SBT: net.hydromatic:eigenbase-properties:1.1.5:jar" level="project" />
     <orderEntry type="library" name="SBT: net.sf.py4j:py4j:0.10.4:jar" level="project" />
@@ -179,7 +180,6 @@
     <orderEntry type="library" name="SBT: org.apache.commons:commons-lang3:3.5:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.derby:derby:10.10.2.0:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.httpcomponents:httpclient:4.5.2:jar" level="project" />
-    <orderEntry type="library" name="SBT: org.apache.httpcomponents:httpcore:4.4.4:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.parquet:parquet-column:1.8.1:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.parquet:parquet-common:1.8.1:jar" level="project" />
     <orderEntry type="library" name="SBT: org.apache.parquet:parquet-encoding:1.8.1:jar" level="project" />
@@ -207,5 +207,17 @@
     <orderEntry type="library" name="SBT: org.spark-project.hive:hive-exec:1.2.1.spark2:jar" level="project" />
     <orderEntry type="library" name="SBT: org.spark-project.hive:hive-metastore:1.2.1.spark2:jar" level="project" />
     <orderEntry type="library" name="SBT: stax:stax-api:1.0.1:jar" level="project" />
+    <orderEntry type="library" name="rest-5.2.2" level="project" />
+    <orderEntry type="library" name="lang-mustache-client-5.2.2" level="project" />
+    <orderEntry type="library" name="elasticsearch-5.2.2" level="project" />
+    <orderEntry type="library" name="reindex-client-5.2.2" level="project" />
+    <orderEntry type="library" name="percolator-client-5.2.2" level="project" />
+    <orderEntry type="library" name="x-pack-api-5.2.2" level="project" />
+    <orderEntry type="library" name="transport-netty3-client-5.2.2" level="project" />
+    <orderEntry type="library" name="transport-5.2.21" level="project" />
+    <orderEntry type="library" name="hppc-0.7.2" level="project" />
+    <orderEntry type="library" name="elasticsearch-5.2.2-sources" level="project" />
+    <orderEntry type="library" name="transport-netty4-client-5.2.2" level="project" />
+    <orderEntry type="library" name="x-pack-transport-5.2.2" level="project" />
   </component>
 </module>

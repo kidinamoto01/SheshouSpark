@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="transport-5.2.21">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Documents/elasticsearch/client/transport/5.2.2/transport-5.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -24,7 +24,4 @@ libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.26"
 
 libraryDependencies += "org.apache.spark" % "spark-hive_2.11" % "2.1.0"
 
-libraryDependencies += "org.elasticsearch" % "elasticsearch-spark-20_2.11" % "5.3.2"
-
-
-
+libraryDependencies += "org.elasticsearch" % "elasticsearch-spark-20_2.11" % "5.2.2"

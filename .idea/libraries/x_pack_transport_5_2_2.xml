@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="x-pack-transport-5.2.2">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/Documents/elasticsearch/client/x-pack-transport/5.2.2/x-pack-transport-5.2.2.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
