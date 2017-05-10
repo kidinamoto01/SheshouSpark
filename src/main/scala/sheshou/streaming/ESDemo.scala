@@ -4,11 +4,12 @@ import java.net.InetAddress
 import java.util.Properties
 
 import org.apache.spark.network.client.TransportClient
-import org.apache.spark.{SparkConf, SparkContext}
 import org.apache.spark.sql.SQLContext
+import org.apache.spark.{SparkConf, SparkContext}
+import org.elasticsearch.spark.sql._
 import org.apache.spark.sql.hive.client
 import org.elasticsearch.common.settings.Settings
-
+import org.elasticsearch.spark._
 
 /**
   * Created by suyu on 17-5-4.
@@ -25,8 +26,12 @@ object ESDemo {
     }*/
 
     val conf = new SparkConf().setAppName("Offline ES Application").setMaster("local[*]")
+    conf.set("es.internal.spark.sql.pushdown.strict", "true")
     conf.set("es.index.auto.create", "false")
-   // conf.set("es.nodes", "42.123.99.38")
+    conf.set("es.nodes", "42.123.99.38")
+    conf.set("es.net.http.auth.user","sheshou")
+    conf.set("es.net.http.auth.pass","sheshou12345")
+   // conf.set("spark.debug.maxToStringFields",)
 
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
@@ -63,18 +68,30 @@ object ESDemo {
     println(s"Loading: ${url} ...")
     val data = reader.load(elasticIndex)
 
+    val tmpResult =data.filter( data("product_type").like("Cisco"))
 
    data.printSchema()
   //  data.head(1).foreach(println)
-   data.registerTempTable("first")
-    val tmp = sqlContext.sql("select count(*),pubdate,score_level, vul_type from first group by pubdate,score_level ,vul_type")
-    tmp.head(10).foreach(println)
+    tmpResult.registerTempTable("esdata")
 
+   /* val schemaRDD = sqlContext.sql("CREATE TEMPORARY view sqlvarcol " +
+      "USING org.elasticsearch.spark.sql " +
+      "OPTIONS (resource '" + elasticIndex + "')")
+
+    val tmp = sqlContext.sql("select product_type from sqlvarcol where product_type == 'Cisco' ")
+    */
+    tmpResult.head(100).foreach(println)
     //sqlContext.sql("CREATE TEMPORARY TABLE myIndex    " + "USING org.elasticsearch.spark.sql " + "OPTIONS ( resource 'sheshou_info/first', nodes '42.123.99.38')")
    /*val Settings settings = Settings.builder().put("cluster.name", "elasticsearch").put("xpack.security.user", "sheshou:sheshou12345").put("client.transport.sniff", true).build()
 
 */
 
 
-}
+    val test = sc.esRDD(elasticIndex,"?q=product_type:MyBB(1.4.11)")
+    test.collect()
+    println(test.first()._2)
+    //println(test.first()._2.get("info_type").mkString)
+
+
+  }
 }
