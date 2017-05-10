@@ -12,22 +12,26 @@ object Write2Mysql {
 
   def main(args: Array[String]) {
     val logFile = "/usr/local/share/spark-2.1.0-bin-hadoop2.6/README.md" // Should be some file on your system
-    val filepath = "hdfs://192.168.1.21:8020/sheshou/data/parquet/netstds/2017/4/16/14"
+    val filepath = "hdfs://192.168.1.21:8020/tmp/sheshou/parquet/2017/3/14/17"
     val middlewarepath = "hdfs://192.168.1.21:8020/user/root/test/webmiddle/20170413/web.json"
     val hdfspath = "hdfs://192.168.1.21:8020/user/root/test/windowslogin/20170413/windowslogin"
     val conf = new SparkConf().setAppName("Offline Doc Application").setMaster("local[*]")
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
     //read json file
-    val file =sqlContext.read.parquet(filepath)//.toDF()
-
+    val file =sqlContext.read.parquet(filepath).toDF()
+    //file.printSchema()
+file.foreach{
+  x=>
+    println(x.getString(3))
+}
     //MySQL connection property
     val prop = new Properties()
     prop.setProperty("user", "root")
     prop.setProperty("password", "andlinks")
 
-    val dfWriter = file.write.mode("overwrite").option("driver", "com.mysql.jdbc.Driver")
-    dfWriter.jdbc("jdbc:mysql://192.168.1.22:3306/log_info", "netstds", prop)
+    //val dfWriter = file.write.mode("overwrite").option("driver", "com.mysql.jdbc.Driver")
+  //  dfWriter.jdbc("jdbc:mysql://192.168.1.22:3306/log_info", "netstds", prop)
 
   }
 

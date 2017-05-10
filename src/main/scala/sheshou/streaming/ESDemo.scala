@@ -49,19 +49,26 @@ object ESDemo {
     println(df.count())
     df.rdd.foreach(println)*/
 
-    val elasticIndex = "sheshou_info/first"
-    val url = "42.123.99.38:9300"
+    val elasticIndex = "sheshou_info_test/first"
+    val url = "42.123.99.38:9200"
    val reader = sqlContext.read.
       format("org.elasticsearch.spark.sql").
-      option("es.net.http.auth.user","sheshou").
-      option("es.net.http.auth.pass","sheshou12345").
+   //  option("es.net.http.auth.user","elastic").
+     // option("es.net.http.auth.pass","bbd@2017!ELASTICSEARCH5").
+     option("es.net.http.auth.user","sheshou").
+    option("es.net.http.auth.pass","sheshou12345").
       option("es.nodes",url).
       option("es.nodes.wan.only","true")
 
     println(s"Loading: ${url} ...")
     val data = reader.load(elasticIndex)
-  //  data.printSchema()
-   // data.count()
+
+
+   data.printSchema()
+  //  data.head(1).foreach(println)
+   data.registerTempTable("first")
+    val tmp = sqlContext.sql("select count(*),pubdate,score_level, vul_type from first group by pubdate,score_level ,vul_type")
+    tmp.head(10).foreach(println)
 
     //sqlContext.sql("CREATE TEMPORARY TABLE myIndex    " + "USING org.elasticsearch.spark.sql " + "OPTIONS ( resource 'sheshou_info/first', nodes '42.123.99.38')")
    /*val Settings settings = Settings.builder().put("cluster.name", "elasticsearch").put("xpack.security.user", "sheshou:sheshou12345").put("client.transport.sniff", true).build()
