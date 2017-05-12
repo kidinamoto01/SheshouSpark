@@ -36,7 +36,8 @@ object ESQuery {
            val elasticIndex = "sheshou_info_test/first"
            val url = "42.123.99.38:9200"
 
-    val test = sc.esRDD(elasticIndex,"?q=product_type:MyBB(1.4.11)")
+    val verName = "MyBB(1.4.11)"
+    val test = sc.esRDD(elasticIndex,"?q=product_type:"+verName)
     test.collect()
     println(test.first()._2)
     //println(test.first()._2.get("info_type").mkString)

@@ -36,13 +36,14 @@ object ESDemo {
     val sc = new SparkContext(conf)
     val sqlContext = new SQLContext(sc)
 
-    /*val numbers = Map("one" -> 1, "two" -> 2, "three" -> 3)
+    var numbers = Map("one" -> 1, "two" -> 2, "three" -> 3)
+    numbers+("four"->4)
     val airports = Map("arrival" -> "Otopeni", "SFO" -> "San Fran")
 
-    sc.makeRDD(Seq(numbers, airports)).saveToEs("spark/docs")
-    val game = Map("media_type"->"game","title" -> "FF VI","year" -> "1994")
-    val book = Map("media_type" -> "book","title" -> "Harry Potter","year" -> "2010")
-    val cd = Map("media_type" -> "music","title" -> "Surfing With The Alien")*/
+//    sc.makeRDD(Seq(numbers, airports)).saveToEs("spark/docs")
+//    val game = Map("media_type"->"game","title" -> "FF VI","year" -> "1994")
+//    val book = Map("media_type" -> "book","title" -> "Harry Potter","year" -> "2010")
+//    val cd = Map("media_type" -> "music","title" -> "Surfing With The Alien")
 
   //  sc.makeRDD(Seq(game, book, cd)).saveToEs("my-collection/{media_type}")
 
@@ -67,12 +68,15 @@ object ESDemo {
 
     println(s"Loading: ${url} ...")
     val data = reader.load(elasticIndex)
-
-    val tmpResult =data.filter( data("product_type").like("Cisco"))
-
-   data.printSchema()
+    data.registerTempTable("estable")
+//    val titleDF = sqlContext.sql("select title from estable")
+//    titleDF.collect()
+//    titleDF.foreach{
+//      x=>
+//        println(x)
+//    }
+//   data.printSchema()
   //  data.head(1).foreach(println)
-    tmpResult.registerTempTable("esdata")
 
    /* val schemaRDD = sqlContext.sql("CREATE TEMPORARY view sqlvarcol " +
       "USING org.elasticsearch.spark.sql " +
@@ -80,18 +84,21 @@ object ESDemo {
 
     val tmp = sqlContext.sql("select product_type from sqlvarcol where product_type == 'Cisco' ")
     */
-    tmpResult.head(100).foreach(println)
+
     //sqlContext.sql("CREATE TEMPORARY TABLE myIndex    " + "USING org.elasticsearch.spark.sql " + "OPTIONS ( resource 'sheshou_info/first', nodes '42.123.99.38')")
    /*val Settings settings = Settings.builder().put("cluster.name", "elasticsearch").put("xpack.security.user", "sheshou:sheshou12345").put("client.transport.sniff", true).build()
 
 */
 
 
-    val test = sc.esRDD(elasticIndex,"?q=product_type:MyBB(1.4.11)")
+    val test = sc.esRDD(elasticIndex,"?q=title:*sys")
     test.collect()
-    println(test.first()._2)
-    //println(test.first()._2.get("info_type").mkString)
-
+    //println(test.first()._2)
+   // println(test.first()._2.get("title").mkString)
+    test.foreach{
+      x=>
+        println( x._2.get("title").mkString)
+    }
 
   }
 }

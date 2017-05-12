@@ -1,4 +1,7 @@
 package sheshou.streaming
+import java.net.InetAddress
+import java.sql.DriverManager
+import java.text.SimpleDateFormat
 import java.util
 
 import kafka.serializer.StringDecoder
@@ -10,6 +13,12 @@ import org.apache.spark.streaming.{Seconds, StreamingContext}
 import java.util.{Calendar, Properties}
 
 import org.apache.spark.sql.hive.HiveContext
+import org.elasticsearch.common.settings.Settings
+import org.elasticsearch.common.transport.InetSocketTransportAddress
+import org.elasticsearch.xpack.client.PreBuiltXPackTransportClient
+import org.elasticsearch.spark._
+import org.elasticsearch.spark.sql.EsSparkSQL
+
 /**
   * Created by suyu on 17-4-13.
   * Function: save kafka data into HDFS
@@ -111,8 +120,13 @@ object SaveKafkaData {
     val sparkConf = new SparkConf().setAppName("SaveKafkaData").setMaster("local[*]")
     //sparkConf.set("spark.hadoop.parquet.enable.summary-metadata", "true")
     //spark.hadoop.parquet.enable.summary-metadata false
+    sparkConf.set("es.internal.spark.sql.pushdown.strict", "true")
+    sparkConf.set("es.index.auto.create", "false")
+    sparkConf.set("es.nodes", "42.123.99.38")
+    sparkConf.set("es.net.http.auth.user","sheshou")
+    sparkConf.set("es.net.http.auth.pass","sheshou12345")
     val  sc = new SparkContext(sparkConf)
-    val ssc = new StreamingContext(sc, Seconds(60))
+    val ssc = new StreamingContext(sc, Seconds(5))
 
 
     // Create direct kafka stream with brokers and topics
@@ -128,6 +142,10 @@ object SaveKafkaData {
 
     val messages3 = KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
       ssc, kafkaParams, Set("windowslogin")).map(_._2)
+
+    //system info
+    val messgesysinfo =  KafkaUtils.createDirectStream[String, String, StringDecoder, StringDecoder](
+      ssc, kafkaParams,  Set("sysinfo")).map(_._2)
 
     //Get Date
     val cal = Calendar.getInstance()
@@ -230,6 +248,114 @@ object SaveKafkaData {
 
     }
 
+
+    //messages from topic report sysinfo
+    messgesysinfo.foreachRDD { x =>
+      //read json data
+      val sqlContext = new org.apache.spark.sql.SQLContext(sc)
+     // val sql = new org.apache.spark.sql.SQLContext(sc)
+      val text = sqlContext.read.json(x)
+      text.printSchema()
+      text.registerTempTable("sysinfo")
+
+      //mysql connection
+      Class.forName("com.mysql.jdbc.Driver")
+      //insert into  mysql
+      val prop = new Properties()
+      //  val userName =  SheShouStreamingConf.getString(Constants.MYSQL_USER)
+      //  val passWord =  SheShouStreamingConf.getString(Constants.MYSQL_PASSWORD)
+      // val connectUrl = SheShouStreamingConf.getString(Constants.MYSQLCONNECT_URL2)
+      val connectionString = "jdbc:mysql://192.168.1.22:3306/nssa_db?user=root&password=andlinks"
+      //val connectionString=connectUrl+"user="+userName+"&password"+passWord
+
+
+      val elasticIndex = "sheshou_info_test/first"
+      if (text.count() > 0) {
+        text.toDF().select("osname").show()
+        val namesDF = text.toDF().select("osname")
+        namesDF.collectAsList().get(1)
+        namesDF.foreach{
+          x=>
+            val content = x.getString(0)
+            val test = ssc.sparkContext.esRDD(elasticIndex,"?q=product_type:"+content.mkString)
+        }
+        //val test = sc.esRDD(elasticIndex,"?q=product_type:"+text.toDF().select("osname").head().mkString)
+        //test.first()
+      }
+
+
+
+    //  val test = sc.esRDD(elasticIndex,"?q=product_type:"+text.toDF().head().getString(1))
+//      if (text.count() > 0) {
+//        text.foreach{
+//          x=>
+//
+//            val tmp  = EsSparkSQL.esDF(sqlContext, "sheshou_info/first", "?q=product_type:MyBB(1.4.11)")
+//
+//            val esConfig:Map[String,String] = Map(+ x.getString(17)
+//              "es.nodes" -> "42.123.99.38"
+//              ,"es.port" -> "9200"
+//              ,"es.net.http.auth.user"->"sheshou"
+//              ,"es.net.http.auth.pass"->"sheshou12345"
+//            )
+//
+//
+//        }
+
+        //
+//        val osVerDF = sqlContext.sql("select osname,id from sysinfo")
+//
+//        osVerDF.foreach{
+//          x=>
+//
+//            val tmpRDD = EsSparkSQL.esDF(sqlContext, "sheshou_info/first", "?q=product_type:MyBB(1.4.11)")
+//
+//            tmpRDD.printSchema()
+//
+//        }
+
+
+      //}
+      //get json schame
+
+      //save text into parquet file
+      //make sure the RDD is not empty
+//      if (text.count() > 0) {
+//        //insert into  attack_list@mysql
+//        sqlContext.sql("set hive.exec.dynamic.partition.mode=nonstrict")
+//        text.registerTempTable("sysinfo")
+//        text.printSchema()
+//
+//        val osVerDF = sqlContext.sql("select osname,id from sysinfo")
+//
+//        osVerDF.foreachPartition{
+//
+//             part=>
+//               val conn = DriverManager.getConnection(connectionString)
+//                 part.foreach{
+//                   line =>
+//                     val osname = line.getString(0)
+//
+//                      //println(test.first()._2.get("info_type").mkString)
+//                      if (test.count() > 0) {
+//
+//                        test.foreach {
+//                          x =>
+//                            val dateFormatter = new SimpleDateFormat("YYYY-MM-d HH:MM:ss")
+//                            val now = dateFormatter.format(Calendar.getInstance().getTime)
+//                            //val insertSQL = "Insert into vulnerability_warnings" + " values( \"0\" ,\"" + now + "\" , \"" + x._2.get("title").mkString + "\" , " + "\"" + line.getString(1) + "\"" + " , \"" + x._2.get("vul_type").mkString + "\" , \"" + x._2.get("score_level").mkString + "\", \"补丁\",0)"
+//                            val insertSQL = "Insert into vulnerability_warnings" + " values( \"0\" ,\"" + now + "\" , \"" + x.getString(0) + "\" , " + "\"" + line.getString(1) + "\"" + " , \"" + x.getString(0) + "\" , \"" + x.getString(1)+ "\", \"补丁\",0)"
+//
+//                            println(insertSQL)
+//                            conn.createStatement.execute(insertSQL)
+//                        }
+//
+//
+//                      }
+//            }
+//        }
+//      }
+    }
     // Start the computation
     ssc.start()
     ssc.awaitTermination()
